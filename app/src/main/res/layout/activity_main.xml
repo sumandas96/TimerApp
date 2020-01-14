@@ -59,7 +59,7 @@
         android:id="@+id/playButton"
         android:layout_width="90dp"
         android:layout_height="62dp"
-        android:layout_marginBottom="176dp"
+        android:layout_marginBottom="212dp"
         android:background="@drawable/buttonblue"
         android:onClick="countDown"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -72,12 +72,12 @@
         android:id="@+id/pauseButton"
         android:layout_width="90dp"
         android:layout_height="62dp"
-        android:layout_marginBottom="176dp"
+        android:layout_marginBottom="212dp"
         android:background="@drawable/buttonblue"
         android:onClick="countPause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintHorizontal_bias="0.351"
         app:layout_constraintStart_toEndOf="@+id/playButton"
         app:srcCompat="@android:drawable/ic_media_pause" />
 
