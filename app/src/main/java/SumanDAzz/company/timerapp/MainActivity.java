@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     //textView.setText("00:00:00");
                     Toast.makeText(MainActivity.this, "Finished", Toast.LENGTH_SHORT).show();
                 }
-            }.start();  
+            }.start();
 
         }
 
