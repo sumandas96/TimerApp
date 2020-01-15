@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         playButton = findViewById(R.id.playButton);
         textViewSec = findViewById(R.id.editSec);
+
+
+
     }
     public void updateTimer(int secendsLeft){
         int minutes = (int)secendsLeft/60;
@@ -28,25 +31,37 @@ public class MainActivity extends AppCompatActivity {
             myString = "0" + myString;
         }
 //        "00:" + "0" +Integer.toString(minutes) +
-        textViewSec.setText(":" + myString);
+        textViewSec.setText(myString);
     }
     public void countDown(View view){
+
         String countSec = textViewSec.getText().toString();
         long  msec = Long.parseLong(countSec)*1000;
-        textViewSec.setText(textViewSec.getText() + String.valueOf(msec/ 1000));
-        new CountDownTimer(msec,1000){
+        long limitSec = 59000;
+        if(msec > limitSec) {
+            Toast.makeText(MainActivity.this,"Invalid input!",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            textViewSec.setText(textViewSec.getText() + String.valueOf(msec/ 1000));
+            new CountDownTimer(msec,1000){
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                updateTimer((int)millisUntilFinished/1000);
-            }
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    updateTimer((int)millisUntilFinished/1000);
+                }
 
-            @Override
-            public void onFinish() {
-                //textView.setText("00:00:00");
-                Toast.makeText(MainActivity.this, "Finished", Toast.LENGTH_SHORT).show();
-            }
-        }.start();
+                @Override
+                public void onFinish() {
+                    //textView.setText("00:00:00");
+                    Toast.makeText(MainActivity.this, "Finished", Toast.LENGTH_SHORT).show();
+                }
+            }.start();  
+
+        }
+
+
+
     }
 
     public void countPause(View view){
