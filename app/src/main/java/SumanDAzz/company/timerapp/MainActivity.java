@@ -65,6 +65,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void countPause(View view){
-
+//invalid input
     }
 }
