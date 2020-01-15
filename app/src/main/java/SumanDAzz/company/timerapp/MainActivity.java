@@ -10,15 +10,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    ImageButton imageButton;
-    TextView textView;
+    ImageButton playButton;
+    TextView textViewSec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageButton = findViewById(R.id.imageButton);
-        textView = findViewById(R.id.textView);
+        playButton = findViewById(R.id.playButton);
+        textViewSec = findViewById(R.id.editSec);
     }
     public void updateTimer(int secendsLeft){
         int minutes = (int)secendsLeft/60;
@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         if(seconds <=9){
             myString = "0" + myString;
         }
-        textView.setText("00:" + "0" +Integer.toString(minutes) + ":" + myString);
+//        "00:" + "0" +Integer.toString(minutes) +
+        textViewSec.setText( ":" + myString);
     }
     public void countDown(View view){
         new CountDownTimer(10000,1000){
@@ -43,5 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Finished", Toast.LENGTH_SHORT).show();
             }
         }.start();
+    }
+
+    public void countPause(View view){
+
     }
 }
