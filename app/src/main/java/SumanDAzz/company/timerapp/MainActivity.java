@@ -28,10 +28,13 @@ public class MainActivity extends AppCompatActivity {
             myString = "0" + myString;
         }
 //        "00:" + "0" +Integer.toString(minutes) +
-        textViewSec.setText( ":" + myString);
+        textViewSec.setText(":" + myString);
     }
     public void countDown(View view){
-        new CountDownTimer(10000,1000){
+        String countSec = textViewSec.getText().toString();
+        long  msec = Long.parseLong(countSec)*1000;
+        textViewSec.setText(textViewSec.getText() + String.valueOf(msec/ 1000));
+        new CountDownTimer(msec,1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
