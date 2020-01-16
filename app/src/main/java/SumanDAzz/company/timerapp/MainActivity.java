@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton playButton;
-    TextView textViewSec;
+    TextView textViewSec, textViewMin, textViewHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,12 +19,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         playButton = findViewById(R.id.playButton);
         textViewSec = findViewById(R.id.editSec);
+        textViewMin = findViewById(R.id.editMin);
+        textViewHour = findViewById(R.id.editHour);
 
 
 
     }
     public void updateTimer(int secendsLeft){
-        int minutes = (int)secendsLeft/60;
+        int minutes = secendsLeft/60;
         int seconds = secendsLeft-minutes*60;
         String myString = Integer.toString(seconds);
         if(seconds <=9){
@@ -36,7 +38,10 @@ public class MainActivity extends AppCompatActivity {
     public void countDown(View view){
 
         String countSec = textViewSec.getText().toString();
+
         long  msec = Long.parseLong(countSec)*1000;
+
+
         long limitSec = 59000;
         if(msec > limitSec) {
             Toast.makeText(MainActivity.this,"Invalid input!",Toast.LENGTH_SHORT).show();
