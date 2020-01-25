@@ -2,121 +2,238 @@ package SumanDAzz.company.timerapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
-    ImageButton playButton,pauseButton,resetButton;
-    EditText textViewhourmin,textViewSec;
-    CountDownTimer mcountDownTimer;
-    final long Time_millis = 60000;
-    long mTime_left = Time_millis;
-    boolean isTimerRunning;
-    int hour,minutes;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+private long timeCountInMillSeconds = 1 * 60000;
+
+private enum TimerStatus{
+    STARTED,
+    STOPPED
+}
+
+    private TimerStatus timerStatus = TimerStatus.STOPPED;
+
+    private EditText editTextMinute;
+    private EditText editTextSec;
+    private TextView textViewTime;
+    private ImageView imageViewReset;
+    private ImageView imageViewStartStop;
+    private CountDownTimer countDownTimer;
+    public RelativeLayout layout;
+    private Button lightButton, darkButton,secButton,minButton;
+
+    protected int mode = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        playButton = findViewById(R.id.playButton);
-        pauseButton = findViewById(R.id.pauseButton);
-        resetButton = findViewById(R.id.resetButton);
-        textViewhourmin = findViewById(R.id.editMinHour);
 
-     //  textViewSec = findViewById(R.id.editsec);
+        initViews();
 
-
-
-
-
-    }
-    public void updateTimer(){
-         hour = (int)(mTime_left/1000)/3600;
-         minutes = (int)((mTime_left/1000)%3600)/60;
-        int seconds = (int)(mTime_left/1000)%60;
-        //int seconds = secendsLeft-minutes*60;
-        //int seconds = (int)(mTime_left/1000)%60 ;
-
-      /*  String myString = Integer.toString(seconds);
-        if(seconds <=9){
-            myString = "0" + myString;
-        }
-//        "00:" + "0" +Integer.toString(minutes) +*/
-        String timeFormatted = null;
-        if(hour>0) {
-            timeFormatted = String.format(Locale.getDefault(), "%d:%02d:%02d", hour, minutes,seconds);
-        }
-         else
-        {
-            timeFormatted = String.format(Locale.getDefault(), "%02d:%02d",minutes,seconds);
-        }
-
-        textViewhourmin.setText(timeFormatted);
-
-    }
-    public void countDown(View view){
-/*
-//        String countSec = textViewSec.getText().toString();
-//        long  msec = Long.parseLong(countSec)*100000;
-//        long limitSec = 59000;
-//        if(msec > limitSec) {
-//            Toast.makeText(MainActivity.this,"Invalid input!",Toast.LENGTH_SHORT).show();
-//        }
-//        else
-//        {
-//            textViewSec.setText(textViewSec.getText() + String.valueOf(msec/ 1000));*/
-
-        String countSec = textViewhourmin.getText().toString();
-//        String mText = ":00";
-//        long  msec = Long.parseLong(countSec)*mTime_left+Long.parseLong(mText);
-        long mtime = Long.parseLong(countSec)*mTime_left;
-        if( mtime==0 ){
-            Toast.makeText(this,"Please Enter a Positive number",Toast.LENGTH_SHORT).show();
-        }
-
-            mcountDownTimer = new CountDownTimer(mtime,1000){
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    //updateTimer((int)millisUntilFinished/1000);
-                    mTime_left = millisUntilFinished;
-                    updateTimer();
-
-                }
-
-                @Override
-                public void onFinish() {
-                    //textView.setText("00:00:00");
-                    Toast.makeText(MainActivity.this, "Finished", Toast.LENGTH_SHORT).show();
-                }
-            }.start();
-
-        }
-        public void pause(View view){
-            mcountDownTimer.cancel();
-            isTimerRunning = false;
-
-        }
-        public void reset(View view){
-            mTime_left = Time_millis;
-            updateTimer();
-
-
-
-
-        }
-
-
+        initListeners();
 
     }
 
+    private void initViews() {
+        editTextMinute = findViewById(R.id.editTextMinute);
+        editTextSec = findViewById(R.id.editTextSeconds);
+        textViewTime = findViewById(R.id.textViewTime);
+        imageViewReset = findViewById(R.id.imageViewReset);
+        imageViewStartStop = findViewById(R.id.imageViewStartStop);
+        layout = findViewById(R.id.activity_main);
+        darkButton = findViewById(R.id.mySwitchButton);
+        lightButton = findViewById(R.id.mySwitchButton2);
+        minButton = findViewById(R.id.timerButtonMin);
+        secButton = findViewById(R.id.timerButtonSec);
+
+    }
+
+    private void initListeners() {
+        imageViewStartStop.setOnClickListener(this);
+        imageViewReset.setOnClickListener(this);
+    }
+
+    public void onClick(View view){
+        switch (view.getId()) {
+            case R.id.imageViewReset:
+                reset();
+                break;
+            case R.id.imageViewStartStop:
+                startStop();
+                break;
+        }
+    }
+
+    public void reset() {
+        stopCountDownTimer();
+        startCountDownTimer();
+    }
+
+    private void startStop() {
+
+        if (timerStatus == TimerStatus.STOPPED) {
+            if(mode == 1) {
+                setTimerValue(1);
+            }
+
+            else if(mode == 2) {
+                setTimerValue(2);
+            }
+
+            else {
+                Toast.makeText(getApplicationContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
 
 
+            imageViewReset.setVisibility(View.VISIBLE);
+
+            imageViewStartStop.setImageResource(R.drawable.icon_pause);
+
+            editTextMinute.setEnabled(false);
+
+            timerStatus = TimerStatus.STARTED;
+
+            startCountDownTimer();
+
+        } else {
+
+            imageViewReset.setVisibility(View.GONE);
+
+            imageViewStartStop.setImageResource(R.drawable.icon_play);
+
+            editTextMinute.setEnabled(true);
+
+            timerStatus = TimerStatus.STOPPED;
+
+            stopCountDownTimer();
+        }
+
+    }
+
+    private void setTimerValue(int mode) {
+        if(mode == 1) {
+            int time = 0;
+            if (!editTextMinute.getText().toString().isEmpty()) {
+                time = Integer.parseInt(editTextMinute.getText().toString().trim());
+
+
+
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.message_minute), Toast.LENGTH_LONG).show();
+            }
+
+            timeCountInMillSeconds = time * 60 * 1000;
+        }
+
+        else if(mode == 2) {
+            int time = 0;
+            if (!editTextSec.getText().toString().isEmpty()) {
+                time = Integer.parseInt(editTextSec.getText().toString().trim());
+
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.message_second), Toast.LENGTH_LONG).show();
+            }
+
+            timeCountInMillSeconds = time * 1000;
+
+        }
+
+        else {
+            Toast.makeText(getApplicationContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void startCountDownTimer(){
+
+        countDownTimer = new CountDownTimer(timeCountInMillSeconds,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
+
+            }
+
+            @Override
+            public void onFinish() {
+                textViewTime.setText(hmsTimeFormatter(timeCountInMillSeconds));
+                imageViewReset.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(),getString(R.string.Finished), Toast.LENGTH_SHORT).show();
+                imageViewStartStop.setImageResource(R.drawable.icon_play);
+                editTextMinute.setEnabled(true);
+                timerStatus = TimerStatus.STOPPED;
+            }
+        }.start();
+        countDownTimer.start();
+    }
+
+    private void stopCountDownTimer() {
+        countDownTimer.cancel();
+    }
+
+    private String hmsTimeFormatter(long milliSeconds) {
+
+        String hms = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(milliSeconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds)- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+
+        return hms;
+    }
+
+    public void onClickMin(View view) {
+        editTextMinute.setVisibility(View.VISIBLE);
+        editTextSec.setVisibility(View.INVISIBLE);
+        active(1);
+    }
+
+    public void onClickSec(View view) {
+        editTextSec.setVisibility(View.VISIBLE);
+        editTextMinute.setVisibility(View.INVISIBLE);
+        active(2);
+    }
+
+    private void active(int k) {
+        mode = k;
+    }
+
+    public void onClickTheme (View view) {
+        //Dark theme
+        layout.setBackgroundColor(Color.parseColor("#1E2538"));
+        lightButton.setVisibility(View.VISIBLE);
+        darkButton.setVisibility(View.INVISIBLE);
+        textViewTime.setTextColor(Color.parseColor("#f39c12"));
+        secButton.setBackgroundResource(R.drawable.dark_button);
+        minButton.setBackgroundResource(R.drawable.dark_button);
+    }
+
+    public void onClickThemeLight (View view) {
+        //Default theme
+        layout.setBackgroundColor(Color.parseColor("#2980b9"));
+        lightButton.setVisibility(View.INVISIBLE);
+        darkButton.setVisibility(View.VISIBLE);
+        textViewTime.setTextColor(Color.parseColor("#ecf0f1"));
+        secButton.setBackgroundResource(R.drawable.buttonblue);
+        minButton.setBackgroundResource(R.drawable.buttonblue);
+    }
+
+
+
+
+}
